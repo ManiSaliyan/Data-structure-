@@ -450,6 +450,130 @@ void main(){
 }
 ```
 
+#Program 9
+```c
+// Online C compiler to run C program online
+#include <stdio.h>
+#include<stdlib.h>
+#include<math.h>
+struct node {
+    int cf,px,py,pz,flag;
+    struct node *link;
+};
+typedef struct node* NODE;
+NODE create(){
+    NODE x;
+    x = (NODE)malloc(sizeof(struct node));
+    if(x==NULL){
+        printf("Memory Allocation Failed\n");
+        exit(0);
+    }
+    return x;
+}
+NODE attach(int cf,int px,int py,int pz,NODE head){
+    NODE temp = create();
+    temp->cf = cf;
+    temp->px = px;
+    temp->py = py;
+    temp->pz = pz;
+    temp->flag = 0;
+    NODE cur = head->link;
+    while(cur->link!=head) cur=cur->link;
+    cur->link = temp;
+    temp->link = head;
+    return head;
+}
+NODE read(NODE head){
+    int cf,px,py,pz;
+    int n,i;
+    printf("Enter total number of terms: ");
+    scanf("%d",&n);
+    for(i=1;i<=n;i++){
+        printf("Enter term %d: \n",i);
+        printf("Enter cf px py pz: ");
+        scanf("%d%d%d%d",&cf,&px,&py,&pz);
+        head = attach(cf,px,py,pz,head);
+    }
+    return head;
+}
+void evalute(NODE h1){
+    int x,y,z;
+    float val = 0;
+    NODE poly;
+    printf("Enter value x y z: ");
+    scanf("%d%d%d",&x,&y,&z);
+    poly = h1->link;
+    while(poly!=h1){
+        val = val +((h1->cf)*pow(x,h1->px)*pow(y,h1->py)*pow(z,h1->pz));
+        poly = poly->link;
+    }
+    printf("Sum = %d\n",val);
+}
+void display(NODE head){
+    if(head->link == head) printf("Polynomial doesnt exist");
+    NODE cur = head->link;
+    while(cur!=head){
+        printf("%d x^ %d y^ %d z^ %d ",cur->cf,cur->px,cur->py,cur->pz);
+        if(cur!= head) printf(" + ");
+        cur = cur->link;
+    }
+}
+NODE addp(NODE h1,NODE h2,NODE h3){
+    NODE p1,p2;
+    int cf1,cf2,x1,x2,y1,y2,z1,z2,considered;
+    p1= h1->link;
+    while(p1!=h1){
+        considered = 0;
+        cf1 = p1->cf;
+        x1 = p1->px;
+        y1 = p1->py;
+        z1 = p1->pz;
+        p2= h2->link;
+        while(p2!=h2){
+            cf2 = p2->cf;
+            x2 = p2->px;
+            y2 = p2->py;
+            z2 = p2->pz;
+            if(x1==x2&&y1==y2&&z1==z2){
+                int coef = cf1+cf2;
+                p2->flag = 1; 
+                considered  = 1;
+                if(coef!=0){
+                    h3 = attach(coef,x1,y1,z1,h3);
+                }
+            }
+            p2 = p2->link;
+        }
+        if(considered == 0){
+            h3 = attach(cf1,x1,y1,z1,h3);
+        }
+	p1 =p1->link;
+    }
+    p2 = h2->link;
+    while(p2!=h2){ 
+        if(p2->flag == 0) {
+            h3 = attach(p2->cf,p2->px,p2->py,p2->pz,h3);
+        }
+        p2 = p2->link;
+    }
+    return h3;
+}
+int main() {
+    // Write C code here
+    NODE h1 = create();
+    NODE h2 = create();
+    NODE h3 = create();
+    h1->link = h1;
+    h2->link = h2;
+    h3->link = h3; 
+    h1 = read(h1);
+    display(h1);
+    h2 = read(h2);
+    //evalute(h1);
+    h3 = addp(h1,h2,h3);
+    display(h3);
+}
+```
 
 # Program 10
 
